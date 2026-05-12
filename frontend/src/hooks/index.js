@@ -31,15 +31,31 @@ export function useMe() {
   });
 }
 
+// export function useLogout() {
+//   const dispatch = useDispatch();
+//   const qc = useQueryClient();
+
+//   return useMutation({
+//     mutationFn: () => authApi.logout(),
+//     onSuccess: () => {
+//       dispatch(clearUser());
+//       qc.clear();
+//     },
+//   });
+// }
+
 export function useLogout() {
   const dispatch = useDispatch();
   const qc = useQueryClient();
 
   return useMutation({
     mutationFn: () => authApi.logout(),
-    onSuccess: () => {
+    onSettled: () => {
+      // Always clear local state — regardless of whether the API call succeeded.
+      // The cookie may already be gone or expired; we never want to be stuck logged in.
       dispatch(clearUser());
       qc.clear();
+      window.location.href = '/login';
     },
   });
 }
